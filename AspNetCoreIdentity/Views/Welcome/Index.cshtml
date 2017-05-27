@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using AspNetCoreIdentity.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <h2>Welcome @UserManager.GetUserName(User)</h2>
+}
+@if (User.IsInRole("Admin"))
+{
+    <h3>You are an administrator.</h3>
+}
