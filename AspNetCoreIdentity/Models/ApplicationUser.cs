@@ -21,19 +21,28 @@ namespace AspNetCoreIdentity.Models
 
         public bool IsEnabled { get; set; } = true;
 
+        private IdentityUserClaim<string> GetAdminRoleClaim() => this.Claims.FirstOrDefault(c =>
+            c.ClaimType == ClaimTypes.Role && c.ClaimValue == "Admin");
+
         public bool IsAdmin
         {
-            get
-            {
-                return this.Claims.Any(c => c.ClaimType == ClaimTypes.Role && c.ClaimValue == "Admin");
-            }
+            get => this.GetAdminRoleClaim() != null;
             set
             {
-                if (!this.IsAdmin) this.Claims.Add(new IdentityUserClaim<string>
+                var adminRoleClaim = GetAdminRoleClaim();
+                var isAdmin = adminRoleClaim != null;
+                if (value)
                 {
-                    ClaimType = ClaimTypes.Role,
-                    ClaimValue = "Admin"
-                });
+                    if (!isAdmin) this.Claims.Add(new IdentityUserClaim<string>
+                    {
+                        ClaimType = ClaimTypes.Role,
+                        ClaimValue = "Admin"
+                    });
+                }
+                else if (isAdmin)
+                    {
+                        this.Claims.Remove(adminRoleClaim);
+                    }
             }
         }
 

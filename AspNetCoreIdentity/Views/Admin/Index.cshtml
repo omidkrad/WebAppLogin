@@ -6,9 +6,9 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <h2>Welcome @UserManager.GetUserName(User)</h2>
+    <h2>Admin Page</h2>
 }
 @if (User.IsInRole("Admin"))
 {
-    <h3>You are an administrator. You can visit <a href="/admin">admin page</a>.</h3>
+    <h3>You are an administrator.</h3>
 }
