@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using AspNetCoreIdentity.Data;
 using AspNetCoreIdentity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreIdentity.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     public class UsersController : Controller
     {

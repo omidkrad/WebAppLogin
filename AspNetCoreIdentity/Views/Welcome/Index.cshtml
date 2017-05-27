@@ -10,5 +10,16 @@
 }
 @if (User.IsInRole("Admin"))
 {
-    <h3>You are an administrator. You can visit <a href="/admin">admin page</a>.</h3>
+    <h3>You are an administrator. You can visit admin page.</h3>
+
+    <div class="row">
+        <br />
+        <div class="col-md-3">
+            <a href="/admin" class="btn btn-warning btn-lg btn-block btn-huge">Admin Page</a>
+        </div>
+    </div>
+}
+else
+{
+    <h3>You are a standard user.</h3>
 }

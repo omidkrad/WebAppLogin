@@ -1,14 +1,43 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using AspNetCoreIdentity.Models
+@model IEnumerable<ApplicationUser>
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-@if (SignInManager.IsSignedIn(User))
+@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
 {
+    var users = UserManager.GetUsersInRoleAsync("Admin");
     <h2>Admin Page</h2>
-}
-@if (User.IsInRole("Admin"))
-{
+
     <h3>You are an administrator.</h3>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+
+            </th>
+        </tr>
+
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => user.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => user.UserName)
+                </td>
+                <td>
+                    @*@Html.ActionLink("Log out", "LogOutUser", new { id =  user.Id })*@
+                </td>
+            </tr>
+        }
+    </table>
 }
