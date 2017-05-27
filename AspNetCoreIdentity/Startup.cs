@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using AspNetCoreIdentity.Data;
 using AspNetCoreIdentity.Models;
 using AspNetCoreIdentity.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreIdentity
 {
@@ -41,7 +42,10 @@ namespace AspNetCoreIdentity
         {
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseInMemoryDatabase());
+
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -75,6 +79,8 @@ namespace AspNetCoreIdentity
 
             app.UseIdentity();
 
+            app.UseTestData(loggerFactory);
+
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>
@@ -84,5 +90,6 @@ namespace AspNetCoreIdentity
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
     }
 }

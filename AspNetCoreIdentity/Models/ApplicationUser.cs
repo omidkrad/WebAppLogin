@@ -1,13 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace AspNetCoreIdentity.Models
 {
-    // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
+        [Required]
+        [MaxLength(50)]
+        public string FirstName { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string LastName { get; set; }
+
+        [Required]
+        public DateTime JoinDate { get; set; }
+
+        public bool IsEnabled { get; set; } = true;
+
+        public bool IsAdmin { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string FullName => FirstName + " " + LastName;
+
     }
 }
