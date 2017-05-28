@@ -57,6 +57,8 @@ namespace AspNetCoreIdentity
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+            services.AddDistributedMemoryCache();
+            services.AddSession();
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -102,6 +104,18 @@ namespace AspNetCoreIdentity
             app.UseTestData(loggerFactory);
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
+
+            app.UseSession();
+
+            app.Map("/session", subApp =>
+            {
+                subApp.Run(async context =>
+                {
+                    var visitCount = context.Session.GetInt32("visits") ?? 0;
+                    context.Session.SetInt32("visits", ++visitCount);
+                    await context.Response.WriteAsync($"You have visited this page {visitCount} times.");
+                });
+            });
 
             app.UseMvc(routes =>
             {
