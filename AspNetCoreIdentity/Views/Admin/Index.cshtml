@@ -8,6 +8,7 @@
 @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
 {
     var users = UserManager.GetUsersInRoleAsync("Admin");
+
     <h2>Admin Page</h2>
 
     <h3>You are an administrator.</h3>
@@ -35,7 +36,7 @@
                     @Html.DisplayFor(modelItem => user.UserName)
                 </td>
                 <td>
-                    @*@Html.ActionLink("Log out", "LogOutUser", new { id =  user.Id })*@
+                    <a asp-controller="users" asp-action="LogOutUser" asp-route-userId="@user.Id">Kick out</a>
                 </td>
             </tr>
         }

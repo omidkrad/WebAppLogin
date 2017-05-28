@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using AspNetCoreIdentity.Data;
 using AspNetCoreIdentity.Models;
 using AspNetCoreIdentity.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreIdentity
@@ -47,7 +49,10 @@ namespace AspNetCoreIdentity
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(identityOptions =>
+                   // Enables immediate logout, after updating the user's state.
+                   identityOptions.SecurityStampValidationInterval = TimeSpan.Zero
+                )
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -74,6 +79,21 @@ namespace AspNetCoreIdentity
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                LoginPath = new PathString("/Account/Login"),
+                Events = new CookieAuthenticationEvents
+                {
+                    OnValidatePrincipal = context =>
+                    {
+                        SecurityStampValidator.ValidatePrincipalAsync(context);
+                        return Task.FromResult(0);
+                    },
+                },
+                ExpireTimeSpan = TimeSpan.FromSeconds(30),
+                SlidingExpiration = true
+            });
 
             app.UseStaticFiles();
 
