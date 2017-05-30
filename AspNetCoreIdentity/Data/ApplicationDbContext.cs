@@ -15,6 +15,8 @@ namespace AspNetCoreIdentity.Data
         {
         }
 
+        public DbSet<UserConnection> UserConnections { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

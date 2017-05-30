@@ -1,0 +1,29 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="room"></div>
+    @*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
+    @*<script src="~/lib/signalr/jquery.signalR.min.js"></script>*@
+    <script defer src="signalr/hubs"></script>
+
+    <script>
+        var connection = $.hubConnection();
+        var hub = connection.createHubProxy('server-notif');
+
+        hub.on('logInfo', console.log);
+        hub.on('logWarning', console.warn);
+        hub.on('logError', console.error);
+        //hub.on('refreshPage', location.reload);
+        hub.on('refreshPage', function () {
+            connection.stop();
+            console.log('refreshing page...');
+            location.reload();
+        });
+
+        connection.start(function() {
+            hub.invoke('join');
+        });
+
+    </script>
+}

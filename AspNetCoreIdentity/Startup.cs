@@ -15,6 +15,8 @@ using AspNetCoreIdentity.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Infrastructure;
 
 namespace AspNetCoreIdentity
 {
@@ -37,6 +39,8 @@ namespace AspNetCoreIdentity
             Configuration = builder.Build();
         }
 
+        public static IConnectionManager ConnectionManager;
+
         public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -56,6 +60,11 @@ namespace AspNetCoreIdentity
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddSignalR(options =>
+            {
+                options.Hubs.EnableDetailedErrors = true;
+            });
+
             services.AddMvc();
             services.AddDistributedMemoryCache();
             services.AddSession();
@@ -66,8 +75,10 @@ namespace AspNetCoreIdentity
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
+            ConnectionManager = serviceProvider.GetService<IConnectionManager>();
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -116,6 +127,8 @@ namespace AspNetCoreIdentity
                     await context.Response.WriteAsync($"You have visited this page {visitCount} times.");
                 });
             });
+
+            app.UseSignalR();
 
             app.UseMvc(routes =>
             {
