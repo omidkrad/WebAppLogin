@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using AspNetCoreIdentity.Data;
+using AspNetCoreIdentity.Middlewares;
 using AspNetCoreIdentity.Models;
 using AspNetCoreIdentity.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -78,6 +79,11 @@ namespace AspNetCoreIdentity
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             ConnectionManager = serviceProvider.GetService<IConnectionManager>();
+
+            app.UseSurfaceDefense(
+                timeSlice: TimeSpan.FromMinutes(10),
+                maxHitsAllowedPerTimeSlice: 20
+            );
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
